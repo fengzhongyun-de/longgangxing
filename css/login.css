@@ -1,0 +1,390 @@
+/* 全局样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: url('../images/longgang.jpg') center/cover no-repeat fixed;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    gap: 40px;
+}
+
+/* 背景遮罩 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg,
+        rgba(0, 0, 0, 0.8) 0%,
+        rgba(0, 0, 0, 0.6) 50%,
+        rgba(0, 0, 0, 0.8) 100%
+    );
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* 动态标题样式 */
+.dynamic-title {
+    text-align: center;
+    position: relative;
+    animation: titleFloat 3s ease-in-out infinite;
+    z-index: 1;
+}
+
+.dynamic-title h1 {
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    margin-bottom: 10px;
+}
+
+.title-decoration {
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.8) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    margin: 0 auto;
+    animation: decorationGlow 2s ease-in-out infinite;
+}
+
+@keyframes titleFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes decorationGlow {
+    0%, 100% {
+        opacity: 0.3;
+        width: 60px;
+    }
+    50% {
+        opacity: 1;
+        width: 100px;
+    }
+}
+
+/* 登录容器样式 */
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* 登录框样式 */
+.login-box {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: slideIn 0.6s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 标题区域样式 */
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.login-header h1 {
+    color: #fff;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 表单样式 */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+}
+
+.form-group label {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+/* 密码提示样式 */
+.password-hint {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 4px;
+    padding-left: 4px;
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.form-group:focus-within .password-hint {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* 下拉选择框特殊样式 */
+.form-group select {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.form-group select option {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 12px;
+}
+
+.form-group select option:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.form-group select:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+/* 记住我选项样式 */
+.remember-me {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #fff;
+}
+
+.remember-me label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* 登录按钮样式 */
+.login-button {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.login-button:hover {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.login-button:active {
+    transform: translateY(0);
+}
+
+/* 响应式调整 */
+@media (max-width: 480px) {
+    .login-box {
+        padding: 30px 20px;
+    }
+    
+    .login-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .dynamic-title h1 {
+        font-size: 2rem;
+    }
+}
+
+/* 信息面板样式 */
+.info-panel {
+    position: fixed;
+    top: 0;
+    padding: 2rem;
+    color: white;
+    z-index: 10;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.info-panel.left {
+    left: 0;
+}
+
+.info-panel.right {
+    right: 0;
+    text-align: right;
+}
+
+/* 时间显示样式 */
+.time-display {
+    font-family: 'Inter', sans-serif;
+}
+
+.current-time {
+    font-size: 3.5rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+    letter-spacing: 2px;
+}
+
+.current-date {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+/* 天气和位置样式 */
+.weather-location {
+    font-family: 'Inter', sans-serif;
+}
+
+.weather {
+    margin-bottom: 1rem;
+}
+
+.weather-temp {
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 0.3rem;
+}
+
+.weather-desc {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.location {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.location-city {
+    font-weight: 500;
+}
+
+.location-district {
+    opacity: 0.9;
+}
+
+/* 响应式调整 */
+@media (max-width: 1200px) {
+    .info-panel {
+        padding: 1.5rem;
+    }
+
+    .current-time {
+        font-size: 2.5rem;
+    }
+
+    .current-date {
+        font-size: 1rem;
+    }
+
+    .weather-temp {
+        font-size: 2rem;
+    }
+
+    .weather-desc,
+    .location {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .info-panel {
+        padding: 1rem;
+    }
+
+    .current-time {
+        font-size: 2rem;
+    }
+
+    .weather-temp {
+        font-size: 1.8rem;
+    }
+}
+
+/* 在小屏幕上隐藏信息面板 */
+@media (max-width: 600px) {
+    .info-panel {
+        display: none;
+    }
+} 

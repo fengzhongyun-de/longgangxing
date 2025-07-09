@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 记忆空间</title>
+    <!-- 引入登录页面的样式文件 -->
+    <link rel="stylesheet" href="css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 左侧信息面板 -->
+    <div class="info-panel left">
+        <div class="time-display">
+            <div class="current-time" id="currentTime">00:00:00</div>
+            <div class="current-date" id="currentDate">2024年1月1日</div>
+        </div>
+    </div>
+
+    <!-- 右侧信息面板 -->
+    <div class="info-panel right">
+        <div class="weather-location">
+            <div class="weather" id="weather">
+                <div class="weather-temp">--℃</div>
+                <div class="weather-desc">获取中...</div>
+            </div>
+            <div class="location" id="location">
+                <div class="location-city">广东省深圳市</div>
+                <div class="location-district">龙岗区爱联社区</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 动态标题 -->
+    <div class="dynamic-title">
+        <h1>龙岗之行</h1>
+        <div class="title-decoration"></div>
+    </div>
+
+    <div class="login-container">
+        <!-- 登录框 -->
+        <div class="login-box">
+            <!-- 标题区域 -->
+            <div class="login-header">
+                <h1>记忆空间</h1>
+            </div>
+            
+            <!-- 登录表单 -->
+            <form id="loginForm" class="login-form">
+                <!-- 用户名选择框 -->
+                <div class="form-group">
+                    <label for="username">选择你的名字</label>
+                    <select id="username" name="username" required>
+                        <option value="" disabled selected>请选择你的名字</option>
+                        <option value="傅梓耀">傅梓耀</option>
+                        <option value="洪宇航">洪宇航</option>
+                        <option value="郑博瑄">郑博瑄</option>
+                        <option value="邓梓轩">邓梓轩</option>
+                        <option value="胡家源">胡家源</option>
+                    </select>
+                </div>
+                
+                <!-- 密码输入框 -->
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required placeholder="请输入密码">
+                    <div class="password-hint">提示：我们去龙岗的日期</div>
+                </div>
+                
+                <!-- 记住我选项 -->
+                <div class="form-group remember-me">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">记住我</label>
+                </div>
+                
+                <!-- 登录按钮 -->
+                <button type="submit" class="login-button">深入记忆</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 引入登录页面的脚本文件 -->
+    <script src="js/login.js"></script>
+</body>
+</html> 
