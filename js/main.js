@@ -66,16 +66,13 @@ const backgroundContainer = document.querySelector('.background-container');
 const photoGrid = document.getElementById('photoGrid');
 
 // 文件存储状态
-let totalStorage = 5 * 1024 * 1024 * 1024; // 5GB (Firebase免费套餐限制)
+let totalStorage = 1024 * 1024 * 1024; // 1GB
 let usedStorage = 0;
 let uploadedFiles = [];
 let currentImageIndex = 0;
 let imageFiles = [];
 let currentBackgroundIndex = -1;
 let activeBackgroundElement = null;
-
-// Firebase引用
-const { storage, db, storageRef, filesCollection } = firebaseServices;
 
 // 音乐播放器控制
 const playlist = [
@@ -373,84 +370,39 @@ function handleFiles(files) {
     // 处理每个文件
     let processedFiles = 0;
     validFiles.forEach(file => {
-        // 创建唯一的文件名，防止覆盖
-        const timestamp = new Date().getTime();
-        const uniqueFileName = `${timestamp}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+        const reader = new FileReader();
         
-        // 创建文件引用
-        const fileRef = storageRef.child(`memories/${uniqueFileName}`);
-        
-        // 上传文件到Firebase Storage
-        const uploadTask = fileRef.put(file);
-        
-        // 监听上传进度
-        uploadTask.on('state_changed', 
-            // 进度回调
-            (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log(`上传进度: ${progress}%`);
-                // 这里可以添加进度条显示
-            }, 
-            // 错误回调
-            (error) => {
-                console.error('上传错误:', error);
-                alert(`上传文件时出错: ${file.name}`);
-                processedFiles++;
-                if (processedFiles === validFiles.length) {
-                    loadingIndicator.style.display = 'none';
-                    fileInput.value = '';
-                }
-            }, 
-            // 完成回调
-            () => {
-                // 获取下载URL
-                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                    console.log('文件可用于下载:', downloadURL);
-                    
-                    // 创建文件数据对象
-                    const fileData = {
-                        name: file.name,
-                        type: file.type,
-                        size: file.size,
-                        url: downloadURL,
-                        timestamp: timestamp,
-                        storagePath: `memories/${uniqueFileName}`,
-                        uploadedBy: localStorage.getItem('rememberedUsername') || '匿名用户',
-                        uploadDate: new Date().toISOString()
-                    };
-                    
-                    // 将文件信息保存到Firestore
-                    filesCollection.doc(`${timestamp}`).set(fileData)
-                        .then(() => {
-                            console.log('文件信息已保存到数据库');
-                            
-                            // 更新存储信息
-                            updateStorageInfo(fileData.size);
-                            
-                            // 添加文件到网格
-                            addFileToGrid(fileData);
-                            
-                            // 如果是图片，添加到图片数组
-                            if (file.type.startsWith('image/')) {
-                                imageFiles.push(fileData);
-                            }
-                        })
-                        .catch((error) => {
-                            console.error('保存文件信息到数据库时出错:', error);
-                        })
-                        .finally(() => {
-                            // 检查是否所有文件都处理完成
-                            processedFiles++;
-                            if (processedFiles === validFiles.length) {
-                                // 隐藏加载提示
-                                loadingIndicator.style.display = 'none';
-                                // 清空文件输入框，允许重复上传相同文件
-                                fileInput.value = '';
-                            }
-                        });
-                });
+        reader.onload = function(e) {
+            const fileData = {
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                data: e.target.result,
+                timestamp: new Date().getTime()
+            };
+            
+            // 保存到本地存储
+            saveFileToStorage(fileData);
+            
+            // 添加到界面
+            addFileToGrid(fileData);
+            
+            // 如果是图片，添加到图片数组
+            if (file.type.startsWith('image/')) {
+                imageFiles.push(fileData);
             }
-        );
+
+            // 检查是否所有文件都处理完成
+            processedFiles++;
+            if (processedFiles === validFiles.length) {
+                // 隐藏加载提示
+                loadingIndicator.style.display = 'none';
+                // 清空文件输入框，允许重复上传相同文件
+                fileInput.value = '';
+            }
+        };
+        
+        reader.readAsDataURL(file);
     });
 }
 
@@ -466,7 +418,6 @@ function saveFileToStorage(fileData) {
 function addFileToGrid(fileData) {
     const fileCard = document.createElement('div');
     fileCard.className = 'file-card fade-in';
-    fileCard.dataset.id = fileData.timestamp;
     
     const isImage = fileData.type.startsWith('image/');
     const preview = isImage ? createImagePreview(fileData) : createVideoPreview(fileData);
@@ -478,8 +429,6 @@ function addFileToGrid(fileData) {
         <div class="file-info">
             <p class="file-name">${fileData.name}</p>
             <p class="file-size">${formatFileSize(fileData.size)}</p>
-            <p class="file-uploader">上传者: ${fileData.uploadedBy || '匿名用户'}</p>
-            <p class="file-date">上传时间: ${new Date(fileData.timestamp).toLocaleString()}</p>
         </div>
         <div class="file-actions">
             <button onclick="downloadFile('${fileData.timestamp}')" class="action-btn download-btn">
@@ -499,9 +448,9 @@ function createImagePreview(fileData) {
     return `
         <div class="preview-container">
             <span class="file-type-badge">图片</span>
-            <img src="${fileData.url}" alt="${fileData.name}" class="preview-img" 
-                onclick="openImageModal('${fileData.url}', ${imageFiles.length})" 
-                onload="this.parentElement.style.backgroundImage = 'url(${fileData.url})'">
+            <img src="${fileData.data}" alt="${fileData.name}" class="preview-img" 
+                onclick="openImageModal('${fileData.data}', ${imageFiles.length})" 
+                onload="this.parentElement.style.backgroundImage = 'url(${fileData.data})'">
         </div>
     `;
 }
@@ -512,7 +461,7 @@ function createVideoPreview(fileData) {
         <div class="preview-container">
             <span class="file-type-badge">视频</span>
             <video class="preview-video" controls>
-                <source src="${fileData.url}" type="${fileData.type}">
+                <source src="${fileData.data}" type="${fileData.type}">
                 您的浏览器不支持视频预览
             </video>
         </div>
@@ -538,123 +487,45 @@ function formatFileSize(bytes) {
 
 // 下载文件
 function downloadFile(timestamp) {
-    // 从Firestore获取文件信息
-    filesCollection.doc(`${timestamp}`).get()
-        .then((doc) => {
-            if (doc.exists) {
-                const fileData = doc.data();
-                
-                // 创建下载链接
-                const link = document.createElement('a');
-                link.href = fileData.url;
-                link.download = fileData.name;
-                link.target = '_blank';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } else {
-                console.error('要下载的文件不存在');
-                alert('找不到要下载的文件');
-            }
-        })
-        .catch((error) => {
-            console.error('下载文件时出错:', error);
-            alert('下载文件时出错，请重试');
-        });
+    const files = JSON.parse(localStorage.getItem('uploadedFiles') || '[]');
+    const file = files.find(f => f.timestamp == timestamp);
+    if (file) {
+        const link = document.createElement('a');
+        link.href = file.data;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 }
 
 // 删除文件
 function deleteFile(button, timestamp) {
-    if (!confirm('确定要删除这个记忆吗？')) {
-        return;
-    }
-    
     const fileCard = button.closest('.file-card');
-    fileCard.classList.add('deleting');
+    let files = JSON.parse(localStorage.getItem('uploadedFiles') || '[]');
+    files = files.filter(f => f.timestamp != timestamp);
+    localStorage.setItem('uploadedFiles', JSON.stringify(files));
     
-    // 从Firestore获取文件信息
-    filesCollection.doc(`${timestamp}`).get()
-        .then((doc) => {
-            if (doc.exists) {
-                const fileData = doc.data();
-                
-                // 从Storage中删除文件
-                const fileRef = storage.ref(fileData.storagePath);
-                return fileRef.delete()
-                    .then(() => {
-                        console.log('文件已从Storage中删除');
-                        
-                        // 从Firestore中删除文件信息
-                        return filesCollection.doc(`${timestamp}`).delete();
-                    })
-                    .then(() => {
-                        console.log('文件信息已从Firestore中删除');
-                        
-                        // 从图片数组中移除
-                        imageFiles = imageFiles.filter(f => f.timestamp != timestamp);
-                        
-                        // 从界面中移除
-                        fileCard.classList.add('fade-out');
-                        setTimeout(() => {
-                            fileCard.remove();
-                            
-                            // 重新加载文件列表以更新存储信息
-                            loadExistingFiles();
-                        }, 300);
-                    });
-            } else {
-                console.error('要删除的文件不存在');
-                alert('找不到要删除的文件');
-                fileCard.classList.remove('deleting');
-            }
-        })
-        .catch((error) => {
-            console.error('删除文件时出错:', error);
-            alert('删除文件时出错，请重试');
-            fileCard.classList.remove('deleting');
-        });
+    // 从图片数组中移除
+    imageFiles = imageFiles.filter(f => f.timestamp != timestamp);
+    
+    fileCard.classList.add('fade-out');
+    setTimeout(() => {
+        fileCard.remove();
+        updateStorageInfo();
+    }, 300);
 }
 
 // 加载现有文件
 function loadExistingFiles() {
-    // 显示加载提示
-    const loadingIndicator = document.getElementById('loadingIndicator');
-    loadingIndicator.style.display = 'flex';
-    
-    // 清空现有文件网格
-    filesGrid.innerHTML = '';
-    imageFiles = [];
-    
-    // 从Firestore加载文件
-    filesCollection.orderBy('timestamp', 'desc').get()
-        .then((querySnapshot) => {
-            let totalSize = 0;
-            
-            querySnapshot.forEach((doc) => {
-                const fileData = doc.data();
-                addFileToGrid(fileData);
-                totalSize += fileData.size;
-                
-                // 如果是图片，添加到图片数组
-                if (fileData.type.startsWith('image/')) {
-                    imageFiles.push(fileData);
-                }
-            });
-            
-            // 更新存储信息
-            usedStorage = totalSize;
-            const percentage = Math.min(100, (usedStorage / totalStorage) * 100);
-            document.querySelector('.storage-used').style.width = `${percentage}%`;
-            storageText.textContent = `${querySnapshot.size} 个记忆`;
-            
-            // 隐藏加载提示
-            loadingIndicator.style.display = 'none';
-        })
-        .catch((error) => {
-            console.error('从Firestore加载文件时出错:', error);
-            loadingIndicator.style.display = 'none';
-            alert('加载记忆时出错，请刷新页面重试');
-        });
+    const files = JSON.parse(localStorage.getItem('uploadedFiles') || '[]');
+    files.forEach(fileData => {
+        addFileToGrid(fileData);
+        if (fileData.type.startsWith('image/')) {
+            imageFiles.push(fileData);
+        }
+    });
+    updateStorageInfo();
 }
 
 // 打开图片预览模态框
@@ -664,7 +535,7 @@ function openImageModal(url, index) {
     const imageCounter = document.getElementById('imageCounter');
     
     // 找到当前图片在imageFiles中的索引
-    currentImageIndex = imageFiles.findIndex(file => file.url === url);
+    currentImageIndex = imageFiles.findIndex(file => file.data === url);
     if (currentImageIndex === -1) currentImageIndex = 0;
     
     modalImage.src = url;
@@ -697,7 +568,7 @@ function showPrevImage() {
     if (currentImageIndex > 0) {
         currentImageIndex--;
         const prevFile = imageFiles[currentImageIndex];
-        document.getElementById('modalImage').src = prevFile.url;
+        document.getElementById('modalImage').src = prevFile.data;
         updateImageCounter();
         updateNavigationButtons();
     }
@@ -708,7 +579,7 @@ function showNextImage() {
     if (currentImageIndex < imageFiles.length - 1) {
         currentImageIndex++;
         const nextFile = imageFiles[currentImageIndex];
-        document.getElementById('modalImage').src = nextFile.url;
+        document.getElementById('modalImage').src = nextFile.data;
         updateImageCounter();
         updateNavigationButtons();
     }
@@ -802,18 +673,6 @@ style.textContent = `
     .file-size {
         color: #666;
         font-size: 0.9rem;
-    }
-
-    .file-uploader {
-        color: #555;
-        font-size: 0.8rem;
-        margin-top: 0.2rem;
-    }
-
-    .file-date {
-        color: #888;
-        font-size: 0.7rem;
-        margin-top: 0.2rem;
     }
 
     .file-actions {
