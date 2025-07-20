@@ -1,48 +1,27 @@
-// Firebase配置文件
-// 初始化Firebase应用
+// Firebase 配置文件
+// 初始化 Firebase 应用
 
-// Firebase配置信息
+// Firebase 配置对象
 const firebaseConfig = {
-  apiKey: "AIzaSyB_jdD63zP-D7MUsGIfDopI017FT_f31iE",
-  authDomain: "longgangxing.firebaseapp.com",
-  projectId: "longgangxing",
-  storageBucket: "longgangxing.firebasestorage.app",
-  messagingSenderId: "900305333679",
-  appId: "1:900305333679:web:56b18ce89d4edec894535a",
-  measurementId: "G-EQT015W1YC"
+  apiKey: "AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", // 需要替换为您的Firebase API密钥
+  authDomain: "longgangxing.firebaseapp.com",        // 需要替换为您的Firebase项目域名
+  projectId: "longgangxing",                         // 需要替换为您的Firebase项目ID
+  storageBucket: "longgangxing.appspot.com",         // 需要替换为您的Firebase存储桶
+  messagingSenderId: "123456789012",                 // 需要替换为您的Firebase消息发送者ID
+  appId: "1:123456789012:web:abcdef1234567890"       // 需要替换为您的Firebase应用ID
 };
 
-// 初始化Firebase
+// 初始化 Firebase
 firebase.initializeApp(firebaseConfig);
 
-// 获取Firebase服务引用
-const auth = firebase.auth();
+// 获取 Storage 和 Firestore 实例
 const storage = firebase.storage();
 const db = firebase.firestore();
 
-// 共享文件集合引用
-const filesCollection = db.collection('files');
-
-// 匿名登录函数
-async function signInAnonymously() {
-  try {
-    const userCredential = await auth.signInAnonymously();
-    console.log('匿名登录成功:', userCredential.user.uid);
-    return userCredential.user;
-  } catch (error) {
-    console.error('匿名登录失败:', error);
-    return null;
-  }
-}
-
-// 在页面加载时尝试匿名登录
-document.addEventListener('DOMContentLoaded', () => {
-  signInAnonymously();
-});
-
-// 导出Firebase服务
+// 导出实例供其他文件使用
 const firebaseServices = {
   storage,
   db,
-  filesCollection
+  storageRef: storage.ref(),
+  filesCollection: db.collection('files')
 }; 
