@@ -258,7 +258,16 @@ body {
 
 .file-size {
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+}
+
+/* 上传者信息样式 */
+.file-uploader {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+    font-style: italic;
 }
 
 .file-actions {
