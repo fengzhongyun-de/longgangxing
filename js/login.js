@@ -159,7 +159,7 @@ function simulateLogin(username) {
     // 模拟网络请求延迟
     setTimeout(() => {
         // 登录成功后跳转到主页
-        window.location.href = 'index.html';
+        window.location.href = 'main.html';
     }, 1500);
 }
 

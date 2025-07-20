@@ -3,134 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>记忆空间 - 龙岗之行</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>龙岗之行 - 记忆空间</title>
+    <!-- 自动重定向到登录页面 -->
+    <meta http-equiv="refresh" content="0; url=login.html">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .loading {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+            opacity: 0.8;
+        }
+    </style>
 </head>
 <body>
-    <!-- 音乐播放器 -->
-    <div class="music-player">
-        <div class="vinyl-player">
-            <img src="assets/icons/2.jpg" alt="唱片机" class="player-icon">
-            <div class="vinyl-disc"></div>
-        </div>
-        <div class="music-controls">
-            <button class="prev-btn" title="上一首">
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path fill="currentColor" d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
-                </svg>
-            </button>
-            <button class="next-btn" title="下一首">
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path fill="currentColor" d="M6 6l8.5 6-8.5 6V6zm9 12V6h2v12z"/>
-                </svg>
-            </button>
-        </div>
-        <div class="music-info">
-            <span class="song-title">加载中...</span>
-            <div class="progress-bar">
-                <div class="progress"></div>
-            </div>
-        </div>
-        <audio id="bgMusic" loop>
-            <source src="" type="audio/mpeg">
-            你的浏览器不支持音频播放
-        </audio>
+    <div>
+        <div class="loading"></div>
+        <p class="message">正在进入记忆空间，请稍候...</p>
+        <script>
+            // 如果重定向没有自动工作，则手动跳转
+            setTimeout(function() {
+                window.location.href = 'login.html';
+            }, 1000);
+        </script>
     </div>
-
-    <!-- 背景容器 -->
-    <div class="background-container">
-        <div class="background-overlay"></div>
-        <!-- 背景图片将在这里动态添加 -->
-    </div>
-
-    <!-- 顶部区域 -->
-    <header class="header">
-        <div class="logo">
-            <h1>记忆空间</h1>
-        </div>
-        <p class="subtitle">记忆深处：2025年5月31日 - 龙岗之行</p>
-    </header>
-
-    <!-- 主要内容区 -->
-    <main class="main-content">
-        <!-- 精选照片展示区 -->
-        <section class="featured-photos">
-            <h2>记忆创造者</h2>
-            <div class="photo-grid" id="photoGrid">
-                <!-- 照片将在这里动态添加 -->
-            </div>
-        </section>
-
-        <!-- 文件上传区 -->
-        <section class="upload-area" id="uploadArea">
-            <div class="upload-icon">
-                <i class="fas fa-cloud-upload-alt"></i>
-            </div>
-            <div class="upload-text">
-                <h3>选择记忆</h3>
-                <p>支持图片和视频格式</p>
-            </div>
-            <input type="file" id="fileInput" multiple accept="image/*,video/*" style="display: none;">
-        </section>
-
-        <!-- 文件列表区 -->
-        <section class="files-area">
-            <h2>记忆收藏<span style="font-size: 1rem; font-weight: normal; margin-left: 10px; color: var(--text-secondary);">（你可以把在龙岗玩的任何记忆储存在此）</span></h2>
-            <div id="filesGrid" class="files-grid">
-                <!-- 文件卡片将在这里动态添加 -->
-            </div>
-        </section>
-
-        <!-- 存储空间信息 -->
-        <section class="storage-info">
-            <div class="storage-header">
-                <h3>记忆容量</h3>
-                <span class="storage-total">记忆容量：无限可能</span>
-            </div>
-            <div class="storage-bar">
-                <div class="storage-used" style="width: 30%"></div>
-            </div>
-            <div class="storage-text">
-                <span>已存储：<span id="storageText">0 个记忆</span></span>
-                <span>剩余空间：无限</span>
-            </div>
-        </section>
-
-        <!-- 加载提示 -->
-        <div id="loadingIndicator" class="loading-indicator">
-            <div class="spinner"></div>
-            <div>正在处理文件...</div>
-        </div>
-    </main>
-
-    <!-- 底部信息 -->
-    <footer class="footer">
-        <div class="footer-content">
-            <p class="footer-title">支持的记忆格式</p>
-            <p class="footer-formats">
-                <span class="format-tag">照片 (JPG)</span>
-                <span class="format-tag">照片 (PNG)</span>
-                <span class="format-tag">动态 (GIF)</span>
-                <span class="format-tag">视频 (MP4)</span>
-                <span class="format-tag">视频 (WebM)</span>
-            </p>
-            <p class="footer-limit">单个记忆大小：不限</p>
-        </div>
-    </footer>
-
-    <!-- 图片预览模态框 -->
-    <div class="image-preview-modal" id="imageModal">
-        <button class="modal-close" onclick="closeImageModal()">×</button>
-        <button class="modal-nav modal-prev" onclick="showPrevImage()">‹</button>
-        <button class="modal-nav modal-next" onclick="showNextImage()">›</button>
-        <div class="modal-image-container">
-            <img class="modal-image" id="modalImage" src="" alt="记忆预览">
-        </div>
-        <div class="image-counter" id="imageCounter">1 / 1</div>
-    </div>
-
-    <script src="js/main.js"></script>
 </body>
 </html> 
