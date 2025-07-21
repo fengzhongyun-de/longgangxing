@@ -102,13 +102,19 @@ document.addEventListener('DOMContentLoaded', () => {
         songTitle.textContent = track.title;
         audio.load();
         
-        if (isPlaying) {
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log('播放出错:', error);
-                });
-            }
+        // 修改：移除条件判断，直接尝试播放
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log('播放出错:', error);
+                // 如果自动播放失败，添加一次性点击事件监听器
+                document.addEventListener('click', () => {
+                    audio.play().then(() => {
+                        isPlaying = true;
+                        musicPlayer.classList.remove('paused');
+                    }).catch(e => console.log('用户交互后播放失败:', e));
+                }, { once: true });
+            });
         }
     }
 
@@ -133,9 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 设置播放进度
+    // 设置播放进度 - 修复进度条点击功能
     function setProgress(e) {
-        const width = progressBar.clientWidth;
+        const width = this.clientWidth;
         const clickX = e.offsetX;
         const duration = audio.duration;
         audio.currentTime = (clickX / width) * duration;
@@ -206,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 更新进度条
     audio.addEventListener('timeupdate', updateProgress);
 
-    // 点击进度条快进
+    // 点击进度条快进 - 修复事件绑定
     progressBar.addEventListener('click', setProgress);
 
     // 一首歌播放完后自动播放下一首
@@ -218,6 +224,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // 如果当前歌曲播放失败，尝试播放下一首
         nextTrack();
     });
+
+    // 移除loop属性，确保歌曲播放完后能触发ended事件
+    audio.removeAttribute('loop');
 
     setupDragAndDrop();
     setupFileInput();
