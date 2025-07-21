@@ -126,11 +126,36 @@ body::before {
 }
 
 .login-header h1 {
-    color: #fff;
+    color: transparent;
     font-size: 2rem;
     margin-bottom: 10px;
     font-weight: 600;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(
+        135deg,
+        #c9c9c9 0%,
+        #ffffff 25%,
+        #c9c9c9 50%,
+        #ffffff 75%,
+        #c9c9c9 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: 2px;
+    position: relative;
+    animation: metalShine 3s ease-in-out infinite;
+}
+
+@keyframes metalShine {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 /* 表单样式 */
