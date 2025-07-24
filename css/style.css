@@ -744,6 +744,28 @@ body {
     transform: translateY(0);
 }
 
+/* 金属质感边框样式 */
+.photo-item-gold {
+    border: 2px solid;
+    border-radius: 8px;
+    border-image: linear-gradient(135deg, #fffbe6 0%, #ffd700 40%, #bfa14a 70%, #fffbe6 100%);
+    border-image-slice: 1;
+    /* 柔和发光和模糊融合效果 */
+    box-shadow: 0 0 16px 4px rgba(255, 215, 0, 0.18), 0 2px 6px rgba(0,0,0,0.10);
+    background: linear-gradient(135deg, #fffbe6 0%, #fff9c4 100%);
+    backdrop-filter: blur(2px);
+}
+.photo-item-silver {
+    border: 2px solid;
+    border-radius: 8px;
+    border-image: linear-gradient(135deg, #f8f8f8 0%, #b0b0b0 40%, #e0e0e0 70%, #f8f8f8 100%);
+    border-image-slice: 1;
+    /* 柔和发光和模糊融合效果 */
+    box-shadow: 0 0 16px 4px rgba(192,192,192,0.13), 0 2px 6px rgba(0,0,0,0.08);
+    background: linear-gradient(135deg, #f8f8f8 0%, #e0e0e0 100%);
+    backdrop-filter: blur(2px);
+}
+
 @media (max-width: 900px) {
     .photo-grid {
         flex-wrap: wrap;

@@ -756,7 +756,12 @@ function addFeaturedPhotos(photos) {
     // 3. 添加原始图片到轨道
     photos.forEach((photo, idx) => {
         const photoItem = document.createElement('div');
-        photoItem.className = 'photo-item';
+        // 判断是否为傅梓耀，决定边框颜色
+        if (photo.caption.includes('傅梓耀')) {
+            photoItem.className = 'photo-item photo-item-gold';
+        } else {
+            photoItem.className = 'photo-item photo-item-silver';
+        }
         photoItem.innerHTML = `
             <img src="${photo.url}" alt="${photo.caption}" loading="lazy">
             <div class="photo-caption">${photo.caption}</div>
@@ -770,12 +775,15 @@ function addFeaturedPhotos(photos) {
     // 4. 克隆一组图片用于无缝衔接
     photos.forEach((photo, idx) => {
         const photoItem = document.createElement('div');
-        photoItem.className = 'photo-item';
+        if (photo.caption.includes('傅梓耀')) {
+            photoItem.className = 'photo-item photo-item-gold';
+        } else {
+            photoItem.className = 'photo-item photo-item-silver';
+        }
         photoItem.innerHTML = `
             <img src="${photo.url}" alt="${photo.caption}" loading="lazy">
             <div class="photo-caption">${photo.caption}</div>
         `;
-        // 点击图片弹出预览
         photoItem.addEventListener('click', () => {
             openImageModal(photo.url, idx);
         });
