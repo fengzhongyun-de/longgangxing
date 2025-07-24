@@ -746,5 +746,85 @@ function addFeaturedPhoto(photoData) {
 
 // 批量添加精选照片
 function addFeaturedPhotos(photos) {
-    photos.forEach(photo => addFeaturedPhoto(photo));
+    // 1. 创建轮播外部容器
+    const wrapper = document.createElement('div');
+    wrapper.className = 'photo-carousel-wrapper';
+    // 2. 创建轮播轨道
+    const track = document.createElement('div');
+    track.className = 'photo-carousel-track';
+
+    // 3. 添加原始图片到轨道
+    photos.forEach((photo, idx) => {
+        const photoItem = document.createElement('div');
+        photoItem.className = 'photo-item';
+        photoItem.innerHTML = `
+            <img src="${photo.url}" alt="${photo.caption}" loading="lazy">
+            <div class="photo-caption">${photo.caption}</div>
+        `;
+        // 点击图片弹出预览
+        photoItem.addEventListener('click', () => {
+            openImageModal(photo.url, idx);
+        });
+        track.appendChild(photoItem);
+    });
+    // 4. 克隆一组图片用于无缝衔接
+    photos.forEach((photo, idx) => {
+        const photoItem = document.createElement('div');
+        photoItem.className = 'photo-item';
+        photoItem.innerHTML = `
+            <img src="${photo.url}" alt="${photo.caption}" loading="lazy">
+            <div class="photo-caption">${photo.caption}</div>
+        `;
+        // 点击图片弹出预览
+        photoItem.addEventListener('click', () => {
+            openImageModal(photo.url, idx);
+        });
+        track.appendChild(photoItem);
+    });
+    // 5. 将轨道添加到外部容器
+    wrapper.appendChild(track);
+    // 6. 清空原有内容并插入新结构
+    photoGrid.innerHTML = '';
+    photoGrid.appendChild(wrapper);
+
+    // 7. 自动滚动参数
+    let scrollSpeed = 1; // 每帧滚动像素
+    let pos = 0; // 当前滚动位置
+    let isPaused = false;
+    // 8. 计算单组图片总宽度
+    function getSingleGroupWidth() {
+        // 只统计前photos.length个元素
+        let width = 0;
+        for (let i = 0; i < photos.length; i++) {
+            width += track.children[i].offsetWidth + parseFloat(getComputedStyle(track).gap || 0);
+        }
+        return width;
+    }
+    // 9. 自动滚动函数
+    function autoScroll() {
+        if (!isPaused) {
+            pos -= scrollSpeed;
+            // 到达一组图片宽度时重置，实现无缝衔接
+            const groupWidth = getSingleGroupWidth();
+            if (Math.abs(pos) >= groupWidth) {
+                pos = 0;
+            }
+            track.style.transform = `translateX(${pos}px)`;
+        }
+        requestAnimationFrame(autoScroll);
+    }
+    // 10. 鼠标悬停暂停滚动
+    wrapper.addEventListener('mouseenter', () => {
+        isPaused = true;
+        track.classList.add('paused');
+    });
+    wrapper.addEventListener('mouseleave', () => {
+        isPaused = false;
+        track.classList.remove('paused');
+    });
+    // 11. 页面加载后启动滚动
+    setTimeout(() => {
+        pos = 0;
+        autoScroll();
+    }, 300); // 延迟确保图片渲染完成
 } 

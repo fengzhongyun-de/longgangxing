@@ -822,12 +822,26 @@ body {
     transform: scale(1.1);
 }
 
+/* 修复唱片图片错位问题 */
 .player-icon {
     width: 100%;
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    /* 只做旋转，不影响平移 */
+    animation: player-spin 3s linear infinite;
+    animation-play-state: paused;
+}
+@keyframes player-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.music-player:not(.paused) .player-icon {
+    animation-play-state: running;
+}
+.music-player.paused .player-icon {
+    animation-play-state: paused;
 }
 
 .vinyl-disc {
@@ -917,3 +931,28 @@ body {
         transform: translate(-50%, -50%) rotate(360deg);
     }
 } 
+
+/* --- 自动横向滚动无缝轮播样式 --- */
+.photo-carousel-wrapper {
+    /* 外部容器，隐藏溢出内容 */
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.photo-carousel-track {
+    display: flex;
+    gap: 1.5rem;
+    /* 横向排列，禁止换行 */
+    flex-wrap: nowrap;
+    /* 启用动画 */
+    will-change: transform;
+    /* 动画由JS控制 */
+}
+
+/* 鼠标悬停时暂停动画（JS会加上.paused类） */
+.photo-carousel-track.paused {
+    animation-play-state: paused !important;
+}
+
+/* 保持原有.photo-grid样式不变，后续JS将其替换为轮播结构 */ 
